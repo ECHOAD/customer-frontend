@@ -1,26 +1,77 @@
-import axios from '@/axios'
+import axios from "@/axios";
 
- const CUSTOMER_API_URL = "/customers/"
+const CUSTOMER_API_URL = "/customers/";
 
-class CustomerService{
-    getCustomers(){
-        return axios.get(CUSTOMER_API_URL)
-    }
-    addCustomers(customer){
-        return axios.post(CUSTOMER_API_URL, customer)
-    }
+class CustomerService {
+  getCustomers() {
+    const url = `${CUSTOMER_API_URL}`;
+    return new Promise((resolve, reject) => {
+      axios
+        .get(url)
+        .then((response) => {
+          resolve(response.data.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+  addCustomers(customer) {
+    const url = `${CUSTOMER_API_URL}`;
+    return new Promise((resolve, reject) => {
+      axios
+        .post(url, customer)
+        .then((response) => {
+          resolve(response.data.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 
-    updateCustomers(customer){
-        return axios.put(`${CUSTOMER_API_URL}${customer.id}`, customer)
-    }
+  updateCustomers(customer) {
+    const url = `${CUSTOMER_API_URL}${customer.id}`;
 
-    deleteCustomers(id){
-        return axios.delete(`${CUSTOMER_API_URL}${id}`)
-    }
+    return new Promise((resolve, reject) => {
+      axios
+        .put(url, customer)
+        .then((response) => {
+          resolve(response.data.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 
-    getCustomer(id){
-        return axios.get(`${CUSTOMER_API_URL}${id}`)
-    }
+  deleteCustomers(id) {
+    const url = `${CUSTOMER_API_URL}${id}`;
+    return new Promise((resolve, reject) => {
+      axios
+        .delete(url)
+        .then((response) => {
+          resolve(response.data.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  getCustomer(id) {
+    const url = `${CUSTOMER_API_URL}${id}`;
+    return new Promise((resolve, reject) => {
+      axios
+        .get(url)
+        .then((response) => {
+          resolve(response.data.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 }
 
-export default new CustomerService()
+export default new CustomerService();

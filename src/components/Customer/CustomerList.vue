@@ -24,7 +24,7 @@
                                     <td>{{ customer.firstName }}</td>
                                     <td>{{ customer.lastName }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" @click="editCustomer(customer)">
+                                        <button type="button" class="btn btn-primary" @click="loadCustomer(customer)">
                                             Edit
                                         </button>
                                         <button type="button" class="btn btn-danger" @click="deleteCustomer(customer)">
@@ -56,8 +56,8 @@ export default{
         }
     }, 
     methods:{
-        editCustomer(customer){
-            this.$emit("edit-customer", customer);
+        loadCustomer(customer){
+            this.$emit("load-customer", customer);
         },
         deleteCustomer(customer){
             this.$emit("delete-customer", customer);
