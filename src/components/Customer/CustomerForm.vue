@@ -31,16 +31,19 @@
       <div class="form-group col-12 mt-3">
         <label for="address">Address</label>
         <div class="btn-addres-action d-flex">
-          <button type="button" class="btn btn-primary" @click="addAddress">
+          <button
+            type="button"
+            :disabled="newAddressAvailabe"
+            class="btn btn-primary"
+            @click="addAddress"
+          >
             Add
           </button>
           <button
             :disabled="customer.addresses.length === 1 || isEditing"
             type="button"
             class="btn btn-danger"
-            @click="
-              removeAddress 
-            "
+            @click="removeAddress"
           >
             Remove
           </button>
@@ -60,16 +63,25 @@
               }"
             />
 
-            <button  type="button" v-if="isEditing" class="btn btn-sm btn-primary m-2"
+            <button
+              type="button"
+              v-if="isEditing"
+              class="btn btn-sm btn-primary m-2"
+              @click="saveAddress(actualAddress)"
             >
               Save
             </button>
             <button
-              :disabled="customer.addresses.length === 1"
+              :disabled="
+                customer.addresses.length === 1 ||
+                (actualAddress.id == 0 && isEditing)
+              "
               type="button"
               class="btn btn-sm btn-danger m-2"
               @click="
-                showConfirmDeleteModalAddress(actualAddress.id ? actualAddress.id : index)
+                showConfirmDeleteModalAddress(
+                  actualAddress.id ? actualAddress.id : index
+                )
               "
             >
               remove
@@ -79,7 +91,7 @@
       </div>
       <div class="btn-action col d-flex flex-column">
         <button type="button" class="btn btn-primary" @click="submitAction">
-          {{ isEditing ? "Edit Customer" : "Add Customer" }}
+          {{ isEditing ? "Save Customer" : "Add Customer" }}
         </button>
         <button type="button" class="btn btn-danger" @click="resetForm">
           {{ isEditing ? "Cancel Edit" : "Reset" }}
@@ -103,32 +115,64 @@ export default {
   },
   computed: {
     ...mapGetters("costumer", ["customer"]),
+    newAddressAvailabe: {
+      get() {
+        return (
+          this.isEditing &&
+          this.customer.addresses.length > 0 &&
+          this.customer.addresses.some((address) => address.id == 0)
+        );
+      },
+    },
   },
   methods: {
     showConfirmDeleteModalAddress(idAddress) {
-      
-        const intance = this.removeAddressById
-      this.$swal(
-        {
-          title: "Delete this address?",
-          text: "Are you sure? You won't be able to revert this!",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Yes, Delete it!",
-          closeOnConfirm: true,
-        },
-        () => {
-          intance(idAddress)
+      const editing = this.isEditing;
+
+      this.$swal({
+        title: "Delete this address?",
+        text: "Are you sure? You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Yes, Delete it!",
+        closeOnConfirm: true,
+      }).then((result) => {
+        if (result.value) {
+          if (!editing) {
+            this.removeAddressById(idAddress);
+            return;
+          }
+
+          this.removeAddressByIdApi(idAddress);
         }
-      );
+      });
+    },
+    async saveAddress(address) {
+      try {
+        const response = await this.$store.dispatch(
+          "costumer/saveCustomerAddress",
+          {
+            idCustomer: this.customer.id,
+            address,
+          }
+        );
+
+        if (response.data) {
+          this.$swal("Added!", "Customer Address has been saved.", "success");
+        } else {
+          this.$swal("Error!", "Customer Address Save has failed", "error");
+        }
+      } catch (e) {
+        console.log(e);
+      }
     },
     submitAction() {
       this.$emit("submit", this.customer);
     },
     addAddress() {
       this.customer.addresses.push({
-        id: this.customer.addresses.length,
+        id: 0,
         address: "",
       });
     },
@@ -136,11 +180,27 @@ export default {
       this.customer.addresses.pop();
     },
     removeAddressById(id) {
-        console.log("asdasd")
       const index = this.customer.addresses.findIndex((address) => {
         return address.id === id;
       });
+
       this.customer.addresses.splice(index, 1);
+    },
+    async removeAddressByIdApi(id) {
+      try {
+        const response = await this.$store.dispatch(
+          "costumer/deleteCustomerAddress",
+          id
+        );
+
+        if (response.data) {
+          this.$swal("Deleted!", "Address Successfully deleted.", "success");
+        } else {
+          this.$swal("Error!", "Something went wrong.", "error");
+        }
+      } catch (e) {
+        this.$swal("Error!", e.response.data, "error");
+      }
     },
     resetForm() {
       this.$emit("reset");
@@ -168,5 +228,9 @@ export default {
 
 .input_compose_address > * {
   margin: 10px;
+}
+
+.btn-action > .btn {
+  margin-top: 10px;
 }
 </style>

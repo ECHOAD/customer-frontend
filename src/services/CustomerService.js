@@ -22,7 +22,7 @@ class CustomerService {
       axios
         .post(url, customer)
         .then((response) => {
-          resolve(response.data.data);
+          resolve(response.data);
         })
         .catch((error) => {
           reject(error);
@@ -37,7 +37,7 @@ class CustomerService {
       axios
         .put(url, customer)
         .then((response) => {
-          resolve(response.data.data);
+          resolve(response.data);
         })
         .catch((error) => {
           reject(error);
@@ -51,7 +51,7 @@ class CustomerService {
       axios
         .delete(url)
         .then((response) => {
-          resolve(response.data.data);
+          resolve(response.data);
         })
         .catch((error) => {
           reject(error);
@@ -65,7 +65,7 @@ class CustomerService {
       axios
         .get(url)
         .then((response) => {
-          resolve(response.data.data);
+          resolve(response.data);
         })
         .catch((error) => {
           reject(error);

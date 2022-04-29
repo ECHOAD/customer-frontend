@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="text">Customers Form</h1>
     <customer-form
-      @submit="addCustomer"
+      @submit="saveCustomer"
       :isEditing="isEditing"
       @reset="resetForm"
     />
@@ -10,6 +10,7 @@
     <customer-list
       class="mt-4"
       @load-customer="loadCustomer"
+      @delete-customer="showConfirmDeleteModalCustomer"
       :customersList="customers"
     />
   </div>
@@ -35,7 +36,8 @@ export default {
     this.getCustomers();
   },
   methods: {
-    getCustomers() {
+    async getCustomers() {
+      await this.$store.dispatch("costumer/resetCustomer");
       this.$store.dispatch("costumer/fetchCustomers");
     },
     resetForm() {
@@ -50,12 +52,56 @@ export default {
         console.log(e);
       }
     },
-    addCustomer() {
+    showConfirmDeleteModalCustomer(customer) {
       this.$swal({
-        title: "Error",
-        text: "Creating Customer",
-        icon: "error",
+        title: "Delete this customer?",
+        text: "Are you sure? You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Yes, Delete it!",
+        closeOnConfirm: true,
+      }).then(async (result) => {
+        if (result.value) {
+          try {
+            
+          const response = await this.$store.dispatch(
+            "costumer/deleteCustomer",
+            customer.id
+          );
+          if (response.data === true) {
+            this.$swal("Deleted!", response.data.message, "success");
+            this.getCustomers();
+          } else {
+            this.$swal("Error!",  response.data.message , "error");
+          }
+          }catch (e){
+
+            this.$swal("Error!",  e.response.data.message , "error");
+
+          }
+        }
       });
+    },
+    async saveCustomer() {
+      try {
+        const response = await this.$store.dispatch("costumer/saveCustomer");
+        console.log(response.data)
+
+        if (response.data) {
+          this.$swal("Saved!", "Customer has been saved.", "success");
+          this.getCustomers();
+        } else {
+          this.$swal("Error!", response.data.message, "error");
+        }
+      } catch (e) {
+        console.log(e);
+        this.$swal({
+          title: "Error",
+          text: e.response.data.message,
+          icon: "error",
+        });
+      }
     },
     deleteCustomer(customer) {
       this.$swal({

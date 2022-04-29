@@ -4,7 +4,7 @@ import CustomerAddressService from "@/services/CustomerAddressService";
 const state = {
     customers: [],
     customer: {
-        id: 0,
+        id: null,
         idCardNumber: "",
         firstName: "",
         lastName: "",
@@ -111,8 +111,6 @@ const actions = {
         try {
             const response = await CustomerService.getCustomer(id);
             commit("MUTATE_CUSTOMER", response.data);
-
-            console.log(response.data);
         } catch (error) {
             console.log(error);
             throw error;
@@ -121,7 +119,8 @@ const actions = {
     async saveCustomer({ dispatch, getters }) {
         try {
             let response;
-            if (getters.customer.id || getters.customer.id === 0) {
+            if (!getters.customer.id) {
+              
                 response = dispatch("addCustomer", getters.customer);
             } else {
                 response = dispatch("updateCustomer", getters.customer);
@@ -163,13 +162,13 @@ const actions = {
     },
     async deleteCustomer({ commit }, id) {
         try {
-            const isDeleted = await CustomerService.deleteCustomers(id);
+            const response = await CustomerService.deleteCustomers(id);
 
-            if (isDeleted) {
+            if (response.data === true) {
                 commit("MUTATE_CUSTOMER_LIST_DELETE", id);
             }
 
-            return isDeleted;
+            return response;
         } catch (error) {
             console.log(error);
             throw error;
@@ -243,9 +242,9 @@ const actions = {
         try {
             let response;
             if (address.id === 0) {
-                response = dispatch("addCustomerAddress", { idCustomer, address });
+                response = await dispatch("addCustomerAddress", { idCustomer, address });
             } else {
-                response = dispatch("updateCustomerAddress", {
+                response = await dispatch("updateCustomerAddress", {
                     idAddress: address.id,
                     address,
                 });
