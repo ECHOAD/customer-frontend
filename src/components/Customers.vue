@@ -1,18 +1,24 @@
 <template>
   <div class="container">
-    <h1 class="text">Customers Form</h1>
-    <customer-form
-      @submit="saveCustomer"
-      :isEditing="isEditing"
-      @reset="resetForm"
-    />
-
-    <customer-list
-      class="mt-4"
-      @load-customer="loadCustomer"
-      @delete-customer="showConfirmDeleteModalCustomer"
-      :customersList="customers"
-    />
+    <div class="row">
+      <section class="form-section col-12">
+        <h1 class="text-center">Customers Registration</h1>
+        <customer-form
+          class="mt-2"
+          @submit="saveCustomer"
+          :isEditing="isEditing"
+          @reset="resetForm"
+        />
+      </section>
+      <section class="list_section col-12">
+        <customer-list
+          class="mt-4"
+          @load-customer="loadCustomer"
+          @delete-customer="showConfirmDeleteModalCustomer"
+          :customersList="customers"
+        />
+      </section>
+    </div>
   </div>
 </template>
 
@@ -37,7 +43,6 @@ export default {
   },
   methods: {
     async getCustomers() {
-      await this.$store.dispatch("costumer/resetCustomer");
       this.$store.dispatch("costumer/fetchCustomers");
     },
     resetForm() {
@@ -64,21 +69,18 @@ export default {
       }).then(async (result) => {
         if (result.value) {
           try {
-            
-          const response = await this.$store.dispatch(
-            "costumer/deleteCustomer",
-            customer.id
-          );
-          if (response.data === true) {
-            this.$swal("Deleted!", response.data.message, "success");
-            this.getCustomers();
-          } else {
-            this.$swal("Error!",  response.data.message , "error");
-          }
-          }catch (e){
-
-            this.$swal("Error!",  e.response.data.message , "error");
-
+            const response = await this.$store.dispatch(
+              "costumer/deleteCustomer",
+              customer.id
+            );
+            if (response.data === true) {
+              this.$swal("Deleted!", response.data.message, "success");
+              this.getCustomers();
+            } else {
+              this.$swal("Error!", response.data.message, "error");
+            }
+          } catch (e) {
+            this.$swal("Error!", e.response.data.message, "error");
           }
         }
       });
@@ -86,11 +88,12 @@ export default {
     async saveCustomer() {
       try {
         const response = await this.$store.dispatch("costumer/saveCustomer");
-        console.log(response.data)
+        console.log(response.data);
 
         if (response.data) {
           this.$swal("Saved!", "Customer has been saved.", "success");
           this.getCustomers();
+          this.resetForm();
         } else {
           this.$swal("Error!", response.data.message, "error");
         }
@@ -113,3 +116,26 @@ export default {
   },
 };
 </script>
+
+<style>
+.form-control {
+  border-radius: 10px;
+}
+
+.label_form {
+  font-size: 15px;
+}
+
+.btn {
+  border-radius: 10px;
+}
+
+.form-section {
+  padding: 20px;
+}
+
+.list_section {
+  padding: 20px;
+}
+</style>
+

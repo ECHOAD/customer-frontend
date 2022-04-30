@@ -2,7 +2,7 @@
   <div class="container">
     <form class="row">
       <div class="form-group col-12 col-lg-4">
-        <label for="idCardNumber">Identification Number</label>
+        <label class="label_form" for="idCardNumber">Identification Number</label>
         <input
           type="text"
           class="form-control"
@@ -11,7 +11,7 @@
         />
       </div>
       <div class="form-group col-12 col-lg-4">
-        <label for="firstName">First Name</label>
+        <label class="label_form" for="firstName">First Name</label>
         <input
           type="text"
           class="form-control"
@@ -20,7 +20,7 @@
         />
       </div>
       <div class="form-group col-12 col-lg-4">
-        <label for="lastName">Last Name</label>
+        <label class="label_form" for="lastName">Last Name</label>
         <input
           type="text"
           class="form-control"
@@ -29,7 +29,7 @@
         />
       </div>
       <div class="form-group col-12 mt-3">
-        <label for="address">Address</label>
+        <label  class="label_form" for="address">Address</label>
         <div class="btn-addres-action d-flex">
           <button
             type="button"

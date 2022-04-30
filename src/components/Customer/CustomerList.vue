@@ -18,7 +18,7 @@
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody v-if="customersList && customersList.length > 0">
                 <tr v-for="customer in customersList" :key="customer.id">
                   <td>{{ customer.idCardNumber }}</td>
                   <td>{{ customer.firstName }}</td>
@@ -41,6 +41,11 @@
                       </button>
                     </div>
                   </td>
+                </tr>
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td colspan="4" class="text-center">No customers found</td>
                 </tr>
               </tbody>
             </table>
@@ -73,11 +78,11 @@ export default {
 </script>
 
 <style scoped>
-.btn-action-table{
-    display: flex;
-    justify-content: between;
+.btn-action-table {
+  display: flex;
+  justify-content: between;
 }
-.btn-action-table > .btn{
-    margin-left: 10px;
+.btn-action-table > .btn {
+  margin-left: 10px;
 }
 </style>
